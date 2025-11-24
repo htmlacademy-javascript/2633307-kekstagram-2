@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм»
 
-* Студент: [Курбан Магомедов](https://up.htmlacademy.ru/javascript-individual/2/user/2633307).
-* Наставник: `Неизвестно`.
+- Студент: [Курбан Магомедов](https://up.htmlacademy.ru/javascript-individual/2/user/2633307).
+- Наставник: `Владислав Доровлев`.
 
 ---
 
