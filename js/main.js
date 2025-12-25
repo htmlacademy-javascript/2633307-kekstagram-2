@@ -1,9 +1,15 @@
 import {createPhotosArray} from './data.js';
-import './function.js';
-<<<<<<< HEAD
+import { renderThumbnails } from './thumbnails.js';
 
-=======
->>>>>>> 3c8722d876c5c9479bc8dc2fb282c131b403fd56
+// Создаем временные данные для разработки
+const photos = createPhotosArray();
+
+// Отрисовываем миниатюры
+renderThumbnails(photos);
+
+// Для тестирования - выводим информацию в консоль
+// eslint-disable-next-line no-console
+console.log(`Отображено ${photos.length} фотографий`);
 // eslint-disable-next-line no-console
 console.log(
   createPhotosArray()
