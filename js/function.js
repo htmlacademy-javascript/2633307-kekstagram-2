@@ -1,6 +1,5 @@
 const checkStringLength = (str, maxLength) => str.length <= maxLength;
 checkStringLength('Hello, world!', 20); // true
-
 function isPalindrome(str) {
   const cleanedStr = str.toLowerCase().replace(/[^a-zа-яё0-9]/g, '');
   const length = cleanedStr.length;
@@ -21,3 +20,4 @@ const extractDigits = (str) => {
   return digits ? parseInt(digits.join(''), 10) : NaN;
 };
 extractDigits('a1b2c3'); // 123
+// eslint-disable-next-line no-console --- IGNORE ---
