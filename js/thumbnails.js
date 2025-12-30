@@ -1,5 +1,5 @@
+import { openFullPicture } from './full-picture.js';
 
-// Функция для создания одного DOM-элемента фотографии на основе шаблона
 const createPictureElement = (photoData) => {
   // Находим шаблон в документе
   const pictureTemplate = document.querySelector('#picture');
@@ -23,6 +23,12 @@ const createPictureElement = (photoData) => {
 
   // Добавляем data-id для возможного последующего использования
   pictureElement.dataset.id = photoData.id;
+
+  // Добавляем обработчик клика для открытия полноразмерного изображения
+  pictureElement.addEventListener('click', (evt) => {
+    evt.preventDefault();
+    openFullPicture(photoData);
+  });
 
   return pictureElement;
 };
