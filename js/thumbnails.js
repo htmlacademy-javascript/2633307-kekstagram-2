@@ -1,4 +1,4 @@
-import { openFullPicture } from './full-picture.js';
+import { onBigPictureOpen } from './big-picture-handler.js';
 
 const createPictureElement = (photoData) => {
   const pictureTemplate = document.querySelector('#picture');
@@ -20,7 +20,7 @@ const createPictureElement = (photoData) => {
   // Явное использование импортированной функции
   pictureElement.addEventListener('click', (evt) => {
     evt.preventDefault();
-    openFullPicture(photoData); // ← функция используется здесь
+    onBigPictureOpen(photoData); // ← функция используется здесь
   });
 
   return pictureElement;
