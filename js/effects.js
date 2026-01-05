@@ -55,7 +55,7 @@ const Effects = {
 let currentEffect = 'none';
 let effectIntensity = 100;
 
-// ========== ИНИЦИАЛИЗАЦИЯ СЛАЙДЕРА ==========
+// ИНИЦИАЛИЗАЦИЯ СЛАЙДЕРА
 function initSlider() {
   if (!effectSlider || typeof noUiSlider === 'undefined') {
     // eslint-disable-next-line no-console
@@ -86,7 +86,43 @@ function initSlider() {
   });
 }
 
-// ========== УПРАВЛЕНИЕ ЭФФЕКТАМИ ==========
+//  ПРИМЕНЕНИЕ ЭФФЕКТА
+function applyEffect() {
+  if (!imagePreview || currentEffect === 'none') {
+    return;
+  }
+
+  const effect = Effects[currentEffect];
+  const percentage = effectIntensity / 100; // 0-100 -> 0-1
+
+  // Вычисляем фактическое значение для CSS фильтра
+  const actualValue = effect.min + (effect.max - effect.min) * percentage;
+
+  // Форматируем значение в зависимости от типа эффекта
+  let filterValue;
+  switch (currentEffect) {
+    case 'marvin':
+      // Для инвертирования используем целые проценты
+      filterValue = `${Math.round(actualValue)}${effect.unit}`;
+      break;
+    case 'phobos':
+      // Для размытия используем одно десятичное значение
+      filterValue = `${actualValue.toFixed(1)}${effect.unit}`;
+      break;
+    case 'chrome':
+    case 'sepia':
+    case 'heat':
+      // Для остальных эффектов используем одно десятичное значение
+      filterValue = `${actualValue.toFixed(1)}${effect.unit}`;
+      break;
+    default:
+      filterValue = `${actualValue.toFixed(1)}${effect.unit}`;
+  }
+
+  imagePreview.style.filter = `${effect.filter}(${filterValue})`;
+}
+
+// ОБНОВЛЕНИЕ СЛАЙДЕРА ДЛЯ ЭФФЕКТА
 function updateSliderForEffect(effectName) {
   const effect = Effects[effectName];
 
@@ -102,32 +138,31 @@ function updateSliderForEffect(effectName) {
 
   effectLevel.classList.remove('hidden');
 
+  // Обновляем настройки слайдера в зависимости от эффекта
   effectSlider.noUiSlider.updateOptions({
     range: {
-      min: effect.min * 100,
-      max: effect.max * 100
+      min: effect.min,
+      max: effect.max
     },
-    start: effect.max * 100,
-    step: effect.step * 100
+    start: effect.max,
+    step: effect.step,
+    format: {
+      to: (value) => {
+        if (effectName === 'marvin') {
+          return Number(value).toFixed(0); // Целые числа для инвертирования
+        }
+        return Number(value).toFixed(1); // Одно десятичное для остальных
+      },
+      from: (value) => parseFloat(value)
+    }
   });
 
   currentEffect = effectName;
-  effectIntensity = effect.max * 100;
+  effectIntensity = 100; // Устанавливаем максимальную интенсивность
   applyEffect();
 }
 
-function applyEffect() {
-  if (!imagePreview || currentEffect === 'none') {
-    return;
-  }
-
-  const effect = Effects[currentEffect];
-  const normalizedValue = effectIntensity / 100;
-  const filterValue = (effect.min + (effect.max - effect.min) * normalizedValue).toFixed(1);
-
-  imagePreview.style.filter = `${effect.filter}(${filterValue}${effect.unit})`;
-}
-
+//СБРОС ЭФФЕКТОВ
 function resetEffects() {
   currentEffect = 'none';
   effectIntensity = 100;
@@ -140,6 +175,22 @@ function resetEffects() {
     imagePreview.style.filter = '';
   }
 
+  // Сбрасываем слайдер к начальному состоянию
+  if (effectSlider && effectSlider.noUiSlider) {
+    effectSlider.noUiSlider.updateOptions({
+      range: {
+        min: 0,
+        max: 100
+      },
+      start: 100,
+      step: 1,
+      format: {
+        to: (value) => Number(value).toFixed(0),
+        from: (value) => parseFloat(value)
+      }
+    });
+  }
+
   // Сбрасываем радиокнопку к эффекту "none"
   const effectNone = document.querySelector('#effect-none');
   if (effectNone) {
@@ -147,14 +198,14 @@ function resetEffects() {
   }
 }
 
-// ========== ОБРАБОТЧИК СОБЫТИЙ ==========
+// ОБРАБОТЧИК СОБЫТИЙ
 function onEffectChange(evt) {
   if (evt.target.name === 'effect') {
     updateSliderForEffect(evt.target.value);
   }
 }
 
-// ========== ОБЩИЕ ГЕТТЕРЫ ==========
+//
 function getCurrentEffect() {
   return currentEffect;
 }
@@ -163,7 +214,7 @@ function getEffectIntensity() {
   return effectIntensity;
 }
 
-// ========== ИНИЦИАЛИЗАЦИЯ МОДУЛЯ ==========
+//  ИНИЦИАЛИЗАЦИЯ МОДУЛЯ
 function initEffects() {
   initSlider();
   resetEffects();
