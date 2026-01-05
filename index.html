@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <link rel="stylesheet" href="css/normalize.css" />
     <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="./vendor/nouislider/nouislider.css" />
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
     <title>Кекстаграм</title>
   </head>
@@ -55,6 +56,9 @@
             <form
               class="img-upload__form"
               id="upload-select-image"
+              method='post'
+              enctype='multipart/form-data'
+              action='https://31.javascript.htmlacademy.pro/kekstagram'
               autocomplete="off"
             >
               <!-- Изначальное состояние поля для загрузки изображения -->
@@ -451,6 +455,9 @@
         <h2 class="data-error__title">Не удалось загрузить данные</h2>
       </section>
     </template>
+
+<script src='./vendor/nouislider/nouislider.js'></script>
+     <script src='./vendor/pristine/pristine.min.js'></script>
     <script type="module" src="js/main.js"></script>
 <script src='js/function.js'></script>
   </body>

@@ -1,17 +1,12 @@
-import {createPhotosArray} from './data.js';
-
+import { createPhotosArray } from './data.js';
 import { renderThumbnails } from './thumbnails.js';
+import { initImageUpload } from './form.js';
+
 // Создаем временные данные для разработки
 const photos = createPhotosArray();
+
 // Отрисовываем миниатюры
 renderThumbnails(photos);
-// Инициализируем фильтры
 
-
-// eslint-disable-next-line no-console
-console.log(`Отображено ${photos.length} фотографий`);
-// eslint-disable-next-line no-console
-console.log(
-  createPhotosArray()
-);
-
+// Инициализируем форму загрузки изображений
+initImageUpload();
