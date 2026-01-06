@@ -1,8 +1,7 @@
-
-
 const effectLevel = document.querySelector('.img-upload__effect-level');
 const effectSlider = document.querySelector('.effect-level__slider');
-const effectValue = document.querySelector('.effect-level__value');
+const effectValue = document.querySelector('.effect-level__value'); // Скрытое поле для сервера
+const effectValueDisplay = effectLevel?.querySelector('.effect-level__value'); // Может быть отдельный элемент для отображения
 const imagePreview = document.querySelector('.img-upload__preview img');
 
 // Конфигурация эффектов
@@ -51,9 +50,8 @@ const Effects = {
   }
 };
 
-// Состояние
+// Текущее состояние эффекта
 let currentEffect = 'none';
-let effectIntensity = 100;
 
 // ИНИЦИАЛИЗАЦИЯ СЛАЙДЕРА
 function initSlider() {
@@ -63,6 +61,12 @@ function initSlider() {
     return;
   }
 
+  // Уничтожаем существующий слайдер, если он уже был создан
+  if (effectSlider.noUiSlider) {
+    effectSlider.noUiSlider.destroy();
+  }
+
+  // Инициализируем слайдер с базовыми настройками
   noUiSlider.create(effectSlider, {
     range: {
       min: 0,
@@ -72,110 +76,155 @@ function initSlider() {
     step: 1,
     connect: 'lower',
     format: {
-      to: (value) => Number(value).toFixed(0),
+      to: (value) =>
+        // Для отправки на сервер всегда используем числа
+        Number(value).toFixed(1)
+      ,
       from: (value) => parseFloat(value)
     }
   });
 
-  effectSlider.noUiSlider.on('update', () => {
-    const value = effectSlider.noUiSlider.get();
-    effectValue.value = value;
-    effectValue.textContent = `${value}%`;
-    effectIntensity = parseFloat(value);
-    applyEffect();
+  // Обработчик обновления слайдера
+  effectSlider.noUiSlider.on('update', (values, handle) => {
+    const sliderValue = values[handle];
+
+    //  Записываем значение в скрытое поле для отправки на сервер
+    if (effectValue) {
+      effectValue.value = sliderValue;
+    }
+
+    // Если есть отдельный элемент для отображения, обновляем его
+    if (effectValueDisplay) {
+      effectValueDisplay.textContent = `${sliderValue}%`;
+    }
+
+    // Применяем эффект к изображению
+    applyEffect(sliderValue);
   });
 }
 
 //  ПРИМЕНЕНИЕ ЭФФЕКТА
-function applyEffect() {
+function applyEffect(sliderValue) {
   if (!imagePreview || currentEffect === 'none') {
     return;
   }
 
   const effect = Effects[currentEffect];
-  const percentage = effectIntensity / 100; // 0-100 -> 0-1
+  const value = parseFloat(sliderValue);
 
-  // Вычисляем фактическое значение для CSS фильтра
-  const actualValue = effect.min + (effect.max - effect.min) * percentage;
+  // Вычисляем значение для CSS фильтра
+  let cssValue;
+  const unit = effect.unit;
 
-  // Форматируем значение в зависимости от типа эффекта
-  let filterValue;
-  switch (currentEffect) {
-    case 'marvin':
-      // Для инвертирования используем целые проценты
-      filterValue = `${Math.round(actualValue)}${effect.unit}`;
-      break;
-    case 'phobos':
-      // Для размытия используем одно десятичное значение
-      filterValue = `${actualValue.toFixed(1)}${effect.unit}`;
-      break;
-    case 'chrome':
-    case 'sepia':
-    case 'heat':
-      // Для остальных эффектов используем одно десятичное значение
-      filterValue = `${actualValue.toFixed(1)}${effect.unit}`;
-      break;
-    default:
-      filterValue = `${actualValue.toFixed(1)}${effect.unit}`;
+  if (currentEffect === 'marvin') {
+    // Для инвертирования: 0-100%
+    cssValue = Math.round(value);
+  } else if (currentEffect === 'phobos') {
+    // Для размытия: 0-100 -> 0-3px
+    cssValue = (value / 100) * effect.max;
+    cssValue = cssValue.toFixed(1);
+  } else if (currentEffect === 'heat') {
+    // Для яркости: 0-100 -> 1-3
+    cssValue = effect.min + (value / 100) * (effect.max - effect.min);
+    cssValue = cssValue.toFixed(1);
+  } else {
+    // Для grayscale и sepia: 0-100 -> 0-1
+    cssValue = (value / 100) * effect.max;
+    cssValue = cssValue.toFixed(1);
   }
 
-  imagePreview.style.filter = `${effect.filter}(${filterValue})`;
+  // Применяем визуальный эффект к изображению
+  imagePreview.style.filter = `${effect.filter}(${cssValue}${unit})`;
 }
 
-// ОБНОВЛЕНИЕ СЛАЙДЕРА ДЛЯ ЭФФЕКТА
+//  УПРАВЛЕНИЕ ЭФФЕКТАМИ
 function updateSliderForEffect(effectName) {
   const effect = Effects[effectName];
 
   if (effectName === 'none') {
+    // Скрываем слайдер и сбрасываем эффект
     effectLevel.classList.add('hidden');
     if (imagePreview) {
-      imagePreview.style.filter = '';
+      imagePreview.style.filter = 'none';
     }
-    effectValue.value = '';
+
+    // Очищаем значение в скрытом поле
+    if (effectValue) {
+      effectValue.value = '';
+    }
+
     currentEffect = 'none';
     return;
   }
 
+  // Показываем слайдер
   effectLevel.classList.remove('hidden');
 
-  // Обновляем настройки слайдера в зависимости от эффекта
-  effectSlider.noUiSlider.updateOptions({
-    range: {
-      min: effect.min,
-      max: effect.max
-    },
-    start: effect.max,
-    step: effect.step,
-    format: {
-      to: (value) => {
-        if (effectName === 'marvin') {
-          return Number(value).toFixed(0); // Целые числа для инвертирования
-        }
-        return Number(value).toFixed(1); // Одно десятичное для остальных
+  // Обновляем настройки слайдера для нового эффекта
+  if (effectSlider.noUiSlider) {
+    const isMarvin = effectName === 'marvin';
+
+    // Вычисляем правильные диапазоны для слайдера
+    const sliderMin = effect.min * (isMarvin ? 1 : 100);
+    const sliderMax = effect.max * (isMarvin ? 1 : 100);
+    const sliderStep = effect.step * (isMarvin ? 1 : 100);
+
+    // Обновляем опции слайдера
+    effectSlider.noUiSlider.updateOptions({
+      range: {
+        min: sliderMin,
+        max: sliderMax
       },
-      from: (value) => parseFloat(value)
+      start: sliderMax, // Всегда начинаем с максимальной интенсивности
+      step: sliderStep,
+      format: {
+        to: (value) => {
+          // Для инвертирования округляем до целого
+          if (effectName === 'marvin') {
+            return Math.round(value);
+          }
+          // Для остальных эффектов - одно десятичное значение
+          return Number(value).toFixed(1);
+        },
+        from: (value) => parseFloat(value)
+      }
+    });
+
+    //  Обновляем значение в скрытом поле
+    if (effectValue) {
+      effectValue.value = sliderMax.toString();
     }
-  });
+  }
 
   currentEffect = effectName;
-  effectIntensity = 100; // Устанавливаем максимальную интенсивность
-  applyEffect();
+
+  // Применяем эффект с максимальной интенсивностью
+  if (effectSlider.noUiSlider) {
+    const sliderMax = effect.max * (effectName === 'marvin' ? 1 : 100);
+    applyEffect(sliderMax);
+  }
 }
 
-//СБРОС ЭФФЕКТОВ
+//  СБРОС ЭФФЕКТОВ
 function resetEffects() {
   currentEffect = 'none';
-  effectIntensity = 100;
 
+  // Скрываем слайдер
   if (effectLevel) {
     effectLevel.classList.add('hidden');
   }
 
+  // Сбрасываем фильтр изображения
   if (imagePreview) {
-    imagePreview.style.filter = '';
+    imagePreview.style.filter = 'none';
   }
 
-  // Сбрасываем слайдер к начальному состоянию
+  // Очищаем значение в скрытом поле для сервера
+  if (effectValue) {
+    effectValue.value = '';
+  }
+
+  // Сбрасываем слайдер к базовому состоянию
   if (effectSlider && effectSlider.noUiSlider) {
     effectSlider.noUiSlider.updateOptions({
       range: {
@@ -185,10 +234,15 @@ function resetEffects() {
       start: 100,
       step: 1,
       format: {
-        to: (value) => Number(value).toFixed(0),
+        to: (value) => Number(value).toFixed(1),
         from: (value) => parseFloat(value)
       }
     });
+
+    // Обновляем значение в скрытом поле
+    if (effectValue) {
+      effectValue.value = '100';
+    }
   }
 
   // Сбрасываем радиокнопку к эффекту "none"
@@ -200,23 +254,36 @@ function resetEffects() {
 
 // ОБРАБОТЧИК СОБЫТИЙ
 function onEffectChange(evt) {
-  if (evt.target.name === 'effect') {
+  if (evt.target.type === 'radio' && evt.target.name === 'effect') {
     updateSliderForEffect(evt.target.value);
   }
 }
 
-//
+// ========== ОБЩИЕ ГЕТТЕРЫ ==========
 function getCurrentEffect() {
   return currentEffect;
 }
 
 function getEffectIntensity() {
-  return effectIntensity;
+  if (currentEffect === 'none' || !effectValue || !effectValue.value) {
+    return 0;
+  }
+  return parseFloat(effectValue.value);
 }
 
 //  ИНИЦИАЛИЗАЦИЯ МОДУЛЯ
 function initEffects() {
+  // Проверяем необходимые элементы
+  if (!effectLevel || !effectSlider || !effectValue || !imagePreview) {
+    // eslint-disable-next-line no-console
+    console.error('Не все необходимые элементы найдены в DOM');
+    return;
+  }
+
+  // Инициализируем слайдер
   initSlider();
+
+  // Сбрасываем к начальному состоянию
   resetEffects();
 
   // Добавляем обработчик для списка эффектов
