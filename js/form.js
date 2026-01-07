@@ -133,7 +133,7 @@ function initValidation() {
       const value = hashtagsInput.value.trim();
       const hashtags = value === '' ? [] : value.split(' ').filter((tag) => tag !== '');
       const countElement = hashtagsInput.parentNode.querySelector('.hashtags-count');
-
+      // Добавляем элемент для отображения количества, если его нет
       if (!countElement) {
         const countEl = document.createElement('div');
         countEl.className = 'hashtags-count';
@@ -142,7 +142,7 @@ function initValidation() {
         countEl.style.marginTop = '5px';
         hashtagsInput.parentNode.appendChild(countEl);
       }
-
+      // Обновляем количество хэштегов
       const element = hashtagsInput.parentNode.querySelector('.hashtags-count');
       if (element) {
         element.textContent = `Хэштегов: ${hashtags.length}/${MAX_HASHTAGS}`;
@@ -175,12 +175,12 @@ function initValidation() {
     });
   }
 }
-
+// Валидатор для комментария
 function validateComment(value) {
   return value.length <= MAX_COMMENT_LENGTH;
 }
 
-// ========== УПРАВЛЕНИЕ ФОРМОЙ ==========
+// Открытие формы
 function openForm() {
   if (!uploadOverlay) {
     return;
@@ -194,7 +194,7 @@ function openForm() {
   resetScale();
   resetEffects();
 }
-
+// Закрытие формы
 function closeForm() {
   if (!uploadOverlay) {
     return;
@@ -240,7 +240,7 @@ function onInputKeydown(evt) {
   }
 }
 
-// ========== ОТПРАВКА ФОРМЫ ==========
+// Отправка формы
 // eslint-disable-next-line no-unused-vars
 async function submitForm(formData) {
   if (!submitButton) {
@@ -270,7 +270,7 @@ async function submitForm(formData) {
     }
   }
 }
-
+// Обработчик отправки формы
 function onFormSubmit(evt) {
   evt.preventDefault();
 
@@ -309,7 +309,7 @@ function onFormSubmit(evt) {
   submitForm(formData);
 }
 
-// ========== ИНИЦИАЛИЗАЦИЯ ==========
+// инициализация обработчиков событий
 function initEventListeners() {
   // Загрузка файла - просто открываем форму при выборе файла
   if (uploadInput) {
@@ -354,7 +354,7 @@ function initEventListeners() {
   }
 }
 
-// ========== ОСНОВНАЯ ИНИЦИАЛИЗАЦИЯ ==========
+// Инициализация модуля загрузки изображений
 function initImageUpload() {
   // Проверяем необходимые элементы
   if (!uploadForm || !uploadInput || !uploadOverlay) {
