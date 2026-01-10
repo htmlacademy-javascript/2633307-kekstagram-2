@@ -1,3 +1,4 @@
+//
 const effectLevel = document.querySelector('.img-upload__effect-level');
 const effectSlider = document.querySelector('.effect-level__slider');
 const effectValue = document.querySelector('.effect-level__value'); // Скрытое поле для сервера

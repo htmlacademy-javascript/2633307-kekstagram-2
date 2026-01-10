@@ -1,5 +1,9 @@
+//function.js
 const checkStringLength = (str, maxLength) => str.length <= maxLength;
 checkStringLength('Hello, world!', 20); // true
+
+
+// Проверка на палиндром
 function isPalindrome(str) {
   const cleanedStr = str.toLowerCase().replace(/[^a-zа-яё0-9]/g, '');
   const length = cleanedStr.length;
@@ -12,6 +16,8 @@ function isPalindrome(str) {
 }
 isPalindrome('топот');
 
+
+// Извлечение цифр из строки
 const extractDigits = (str) => {
   if (typeof str !== 'string') {
     return NaN;

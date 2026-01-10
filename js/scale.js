@@ -1,3 +1,4 @@
+// scale.js
 const scaleSmaller = document.querySelector('.scale__control--smaller');
 const scaleBigger = document.querySelector('.scale__control--bigger');
 const scaleValue = document.querySelector('.scale__control--value');
@@ -39,11 +40,11 @@ function getCurrentScale() {
 // Инициализация управления масштабом
 function initScale() {
   resetScale();
-
+  // Добавление обработчика для кнопки уменьшения масштаба
   if (scaleSmaller) {
     scaleSmaller.addEventListener('click', onScaleDownClick);
   }
-
+  // Добавление обработчика для кнопки увеличения масштаба
   if (scaleBigger) {
     scaleBigger.addEventListener('click', onScaleUpClick);
   }

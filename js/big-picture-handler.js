@@ -1,4 +1,4 @@
-
+// big-picture-handler.js
 const bigPictureModal = document.querySelector('.big-picture');
 const closeButton = bigPictureModal.querySelector('.big-picture__cancel');
 const socialComments = bigPictureModal.querySelector('.social__comments');

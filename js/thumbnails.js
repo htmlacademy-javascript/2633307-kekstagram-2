@@ -1,3 +1,4 @@
+// thumbnails.js
 import { onBigPictureOpen } from './big-picture-handler.js';
 
 const createPictureElement = (photoData) => {
