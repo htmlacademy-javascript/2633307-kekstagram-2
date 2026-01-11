@@ -1,4 +1,3 @@
-// util.js
 const getRandomElement = (array) => array[Math.floor(Math.random() * array.length)];
 
 const getRandomInteger = (min, max) => {

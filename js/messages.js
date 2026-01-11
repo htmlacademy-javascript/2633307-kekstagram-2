@@ -1,4 +1,3 @@
-// Функция для показа сообщения об успехе
 export const showSuccessMessage = (message = 'Изображение успешно загружено!') => {
   const template = document.querySelector('#success');
   if (!template) {

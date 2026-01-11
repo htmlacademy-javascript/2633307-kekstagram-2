@@ -1,4 +1,3 @@
-//function.js
 const checkStringLength = (str, maxLength) => str.length <= maxLength;
 checkStringLength('Hello, world!', 20); // true
 

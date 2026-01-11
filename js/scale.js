@@ -1,4 +1,3 @@
-// scale.js
 const scaleSmaller = document.querySelector('.scale__control--smaller');
 const scaleBigger = document.querySelector('.scale__control--bigger');
 const scaleValue = document.querySelector('.scale__control--value');
@@ -33,7 +32,6 @@ function resetScale() {
   currentScale = SCALE_DEFAULT;
   updateScale(SCALE_DEFAULT);
 }
-// Функция для получения текущего значения масштаба
 
 // Инициализация управления масштабом
 function initScale() {
