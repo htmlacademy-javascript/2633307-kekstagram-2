@@ -32,21 +32,18 @@ function resetScale() {
   currentScale = SCALE_DEFAULT;
   updateScale(SCALE_DEFAULT);
 }
-// Функция для получения текущего значения масштаба
-function getCurrentScale() {
-  return currentScale;
-}
+
 // Инициализация управления масштабом
 function initScale() {
   resetScale();
-
+  // Добавление обработчика для кнопки уменьшения масштаба
   if (scaleSmaller) {
     scaleSmaller.addEventListener('click', onScaleDownClick);
   }
-
+  // Добавление обработчика для кнопки увеличения масштаба
   if (scaleBigger) {
     scaleBigger.addEventListener('click', onScaleUpClick);
   }
 }
 
-export { initScale, resetScale, getCurrentScale };
+export { initScale, resetScale,};
