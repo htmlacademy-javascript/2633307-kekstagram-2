@@ -34,9 +34,7 @@ function resetScale() {
   updateScale(SCALE_DEFAULT);
 }
 // Функция для получения текущего значения масштаба
-function getCurrentScale() {
-  return currentScale;
-}
+
 // Инициализация управления масштабом
 function initScale() {
   resetScale();
@@ -50,4 +48,4 @@ function initScale() {
   }
 }
 
-export { initScale, resetScale, getCurrentScale };
+export { initScale, resetScale,};

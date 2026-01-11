@@ -1,6 +1,6 @@
 import { showSuccessMessage, showErrorMessage } from './messages.js';
-import { initEffects, resetEffects, getCurrentEffect, getEffectIntensity} from './effects.js';
-import { initScale, resetScale, getCurrentScale } from './scale.js';
+import { initEffects, resetEffects,} from './effects.js';
+import { initScale, resetScale,} from './scale.js';
 import { sendData } from './api.js';
 
 const FILE_TYPES = ['jpg', 'jpeg', 'png', 'gif'];
@@ -26,7 +26,7 @@ let isFormOpen = false;
 let isSubmitting = false;
 let pristine = null;
 
-// ========== ОБРАБОТКА ВЫБОРА ФАЙЛА ==========
+//обработчик изменения файла
 const onFileChange = () => {
   const file = fileChooser.files[0];
   if (!file) {
@@ -57,7 +57,7 @@ const onFileChange = () => {
   openForm();
 };
 
-// ========== ВАЛИДАЦИЯ ==========
+//валидация хэштегов и комментариев
 function validateHashtags(value) {
   const trimmedValue = value.trim();
   if (trimmedValue === '') {
@@ -118,7 +118,7 @@ function initValidation() {
     console.error('Библиотека Pristine не загружена');
     return;
   }
-
+  // Создаем экземпляр Pristine
   pristine = new Pristine(uploadForm, {
     classTo: 'img-upload__field-wrapper',
     errorClass: 'img-upload__field-wrapper--error',
@@ -153,7 +153,7 @@ function initValidation() {
   );
 }
 
-// ========== УПРАВЛЕНИЕ ФОРМОЙ ==========
+// Открытие формы
 function openForm() {
   if (!uploadOverlay) {
     return;
@@ -220,7 +220,7 @@ function closeForm() {
   resetForm();
 }
 
-// ========== ОБРАБОТЧИКИ КЛАВИАТУРЫ ==========
+//
 function onDocumentKeydown(evt) {
   if (!isFormOpen) {
     return;
@@ -242,7 +242,7 @@ function onInputKeydown(evt) {
   }
 }
 
-// ========== ОТПРАВКА ФОРМЫ НА СЕРВЕР ==========
+// Отправка формы
 async function submitForm(formData) {
   if (!submitButton) {
     return;
@@ -300,15 +300,15 @@ function onFormSubmit(evt) {
   const formData = new FormData(uploadForm);
 
   // Добавляем дополнительные данные
-  formData.append('scale', getCurrentScale());
-  formData.append('effect', getCurrentEffect());
-  formData.append('effect-intensity', getEffectIntensity());
+  // formData.append('scale', getCurrentScale());
+  // formData.append('effect', getCurrentEffect());
+  // formData.append('effect-intensity', getEffectIntensity());
 
   // Отправляем форму
   submitForm(formData);
 }
 
-// ========== ИНИЦИАЛИЗАЦИЯ ОБРАБОТЧИКОВ ==========
+// Инициализация обработчиков событий формы
 function initEventListeners() {
   // Загрузка файла
   if (fileChooser) {
@@ -338,7 +338,7 @@ function initEventListeners() {
   }
 }
 
-// ========== ИНИЦИАЛИЗАЦИЯ МОДУЛЯ ==========
+// ИНИЦИАЛИЗАЦИЯ ФОРМЫ ЗАГРУЗКИ ИЗОБРАЖЕНИЯ
 function initImageUpload() {
   if (!uploadForm || !uploadInput || !uploadOverlay) {
     // eslint-disable-next-line no-console

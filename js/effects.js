@@ -261,16 +261,6 @@ function onEffectChange(evt) {
 }
 
 // ========== ОБЩИЕ ГЕТТЕРЫ ==========
-function getCurrentEffect() {
-  return currentEffect;
-}
-
-function getEffectIntensity() {
-  if (currentEffect === 'none' || !effectValue || !effectValue.value) {
-    return 0;
-  }
-  return parseFloat(effectValue.value);
-}
 
 //  ИНИЦИАЛИЗАЦИЯ МОДУЛЯ
 function initEffects() {
@@ -295,9 +285,8 @@ function initEffects() {
 
   return {
     reset: resetEffects,
-    getCurrentEffect,
-    getEffectIntensity
+
   };
 }
 
-export { initEffects, resetEffects, getCurrentEffect, getEffectIntensity, onEffectChange };
+export { initEffects, resetEffects, onEffectChange };
