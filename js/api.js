@@ -23,8 +23,8 @@ export async function sendData(body) {
     }
 
     // Для отладки: выводим содержимое FormData
-    // eslint-disable-next-line no-console
-    console.log('Отправляемые данные:');
+
+
     for (const [key, value] of body.entries()) {
       // eslint-disable-next-line no-console
       console.log(`${key}:`, value);
@@ -33,14 +33,12 @@ export async function sendData(body) {
     const response = await fetch('https://31.javascript.htmlacademy.pro/kekstagram', {
       method: 'POST',
       body: body,
-      // Для FormData заголовки устанавливать не нужно
+
     });
 
-    // eslint-disable-next-line no-console
-    console.log('Статус ответа:', response.status, response.statusText);
 
     if (!response.ok) {
-      // Пытаемся получить текст ошибки от сервера
+      // Получаем текст ошибки от сервера для отладки
       const errorText = await response.text();
       // eslint-disable-next-line no-console
       console.error('Текст ошибки от сервера:', errorText);
@@ -48,7 +46,7 @@ export async function sendData(body) {
       throw new Error(`Ошибка сервера: ${response.status} ${response.statusText}`);
     }
 
-    // Пытаемся получить ответ в разных форматах
+    // Проверяем тип содержимого ответа
     const contentType = response.headers.get('content-type');
 
     if (contentType && contentType.includes('application/json')) {
