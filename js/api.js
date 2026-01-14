@@ -1,74 +1,45 @@
-// Апи для получения и отправки данныхexport async function sendData(body) {
-export async function getData() {
+// Базовый URL API сервиса Kekstagram
+const BASE_URL = 'https://31.javascript.htmlacademy.pro/kekstagram';
+
+// Пути (эндпоинты) для разных запросов к API
+const Route = {
+  GET_DATA: '/data', // получение списка фотографий
+  SEND_DATA: '/', // отправка формы с новой фотографией
+};
+
+// Поддерживаемые HTTP‑методы
+const Method = {
+  GET: 'GET',
+  POST: 'POST',
+};
+
+// Текст сообщений об ошибках для разных типов запросов
+const ErrorText = {
+  GET_DATA: 'Не удалось загрузить данные. Попробуйте обновить страницу',
+  SEND_DATA: 'Не удалось отправить форму. Попробуйте ещё раз',
+};
+
+// Универсальная функция загрузки данных: делает запрос и обрабатывает ошибки
+const load = async (route, errorText, method = Method.GET, body = null) => {
   try {
-    const response = await fetch('https://31.javascript.htmlacademy.pro/kekstagram/data');
-
+    const response = await fetch(`${BASE_URL}${route}`, { method, body });
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      // если статус не 2xx — бросаем ошибку, чтобы перейти в catch
+      throw new Error();
     }
-
-    return await response.json();
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Ошибка при получении данных:', error);
-    throw error;
+    // при успехе возвращаем распарсенный JSON‑ответ
+    return response.json();
+  } catch {
+    // при любой ошибке пробрасываем человекочитаемый текст
+    throw new Error(errorText);
   }
-}
+};
 
-export async function sendData(body) {
-  try {
-    // Проверяем, что body является FormData
-    if (!(body instanceof FormData)) {
-      throw new Error('Тело запроса должно быть FormData');
-    }
+// Получение данных с сервера (список фотографий)
+const getData = () => load(Route.GET_DATA, ErrorText.GET_DATA);
 
-    // Для отладки: выводим содержимое FormData
+// Отправка данных формы на сервер (новая фотография)
+const sendData = (body) => load(Route.SEND_DATA, ErrorText.SEND_DATA, Method.POST, body);
 
-
-    for (const [key, value] of body.entries()) {
-      // eslint-disable-next-line no-console
-      console.log(`${key}:`, value);
-    }
-
-    const response = await fetch('https://31.javascript.htmlacademy.pro/kekstagram', {
-      method: 'POST',
-      body: body,
-
-    });
-
-
-    if (!response.ok) {
-      // Получаем текст ошибки от сервера для отладки
-      const errorText = await response.text();
-      // eslint-disable-next-line no-console
-      console.error('Текст ошибки от сервера:', errorText);
-
-      throw new Error(`Ошибка сервера: ${response.status} ${response.statusText}`);
-    }
-
-    // Проверяем тип содержимого ответа
-    const contentType = response.headers.get('content-type');
-
-    if (contentType && contentType.includes('application/json')) {
-      return await response.json();
-    } else {
-      return await response.text();
-    }
-
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Подробная ошибка при отправке:');
-    // eslint-disable-next-line no-console
-    console.error('- Сообщение:', error.message);
-    // eslint-disable-next-line no-console
-    console.error('- Тип:', error.name);
-
-    // Проверяем CORS ошибки
-    if (error.name === 'TypeError' && error.message.includes('fetch')) {
-      // eslint-disable-next-line no-console
-      console.error('Возможно CORS ошибка. Проверьте настройки сервера.');
-    }
-
-    throw error;
-  }
-}
+// Экспорт функций API для использования в других модулях
+export { getData, sendData };

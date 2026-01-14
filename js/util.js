@@ -1,12 +1,21 @@
-const getRandomElement = (array) => array[Math.floor(Math.random() * array.length)];
+// Набор вспомогательных утилит: случайные значения, генератор id и debounce
 const DEBOUNCE_DELAY = 500;
+
+// Получение случайного целого числа в диапазоне [min, max]
 const getRandomInteger = (min, max) => {
   const lower = Math.ceil(Math.min(Math.abs(min), Math.abs(max)));
   const upper = Math.floor(Math.max(Math.abs(min), Math.abs(max)));
-  return Math.floor(Math.random() * (upper - lower + 1)) + lower;
+  const result = Math.random() * (upper - lower + 1) + lower;
+  return Math.floor(result);
 };
 
-// Генератор уникальных ID для комментариев
+// Получение случайного элемента массива
+const getRandomElement = (array) => {
+  const randomIndex = getRandomInteger(0, array.length - 1);
+  return array[randomIndex];
+};
+
+// Создание генератора уникальных числовых идентификаторов
 const createIdGenerator = () => {
   let lastGeneratedId = 0;
 
@@ -16,9 +25,10 @@ const createIdGenerator = () => {
   };
 };
 
+// Генератор id для комментариев
 const generateCommentId = createIdGenerator();
 
-// Функция для устранения дребезга (debounce)
+// Функция debounce: откладывает вызов колбэка, пока идут частые события
 const debounce = (callback, timeoutDelay = DEBOUNCE_DELAY) => {
   let timeoutId;
 
@@ -28,4 +38,5 @@ const debounce = (callback, timeoutDelay = DEBOUNCE_DELAY) => {
   };
 };
 
+// Экспорт утилит для использования в других модулях
 export { getRandomInteger, getRandomElement, generateCommentId, debounce };
