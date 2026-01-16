@@ -20,20 +20,17 @@ const ErrorText = {
 };
 
 // Универсальная функция загрузки данных: делает запрос и обрабатывает ошибки
-const load = async (route, errorText, method = Method.GET, body = null) => {
-  try {
-    const response = await fetch(`${BASE_URL}${route}`, { method, body });
-    if (!response.ok) {
-      // если статус не 2xx — бросаем ошибку, чтобы перейти в catch
-      throw new Error();
-    }
-    // при успехе возвращаем распарсенный JSON‑ответ
-    return response.json();
-  } catch {
-    // при любой ошибке пробрасываем человекочитаемый текст
-    throw new Error(errorText);
-  }
-};
+const load = (route, errorText, method = Method.GET, body = null) =>
+  fetch(`${BASE_URL}${route}`, { method, body })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error();
+      }
+      return response.json();
+    })
+    .catch(() => {
+      throw new Error(errorText);
+    });
 
 // Получение данных с сервера (список фотографий)
 const getData = () => load(Route.GET_DATA, ErrorText.GET_DATA);
