@@ -142,9 +142,9 @@ const resetEffects = () => {
 // Инициализация модуля эффектов и подписка на изменения списка эффектов
 const initEffects = () => {
   initSlider();
+  updateSlider();
   if (effectsList) {
     effectsList.addEventListener('change', onEffectChange);
   }
 };
-
 export { initEffects, resetEffects };
